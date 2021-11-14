@@ -1,0 +1,53 @@
+.tasks {
+    
+    overflow: hidden !important;
+    .task {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        width: 420px;
+
+        img {
+           margin-left: auto;
+           cursor: pointer;
+        }
+        
+    }
+
+    h1 {
+        font-size: 32px;
+        line-height: 39px;
+        color: #64c4ed;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #f2f2f2;
+        margin-bottom: 30px;
+    }
+
+    .items {
+        display: flex;
+        flex-direction: column;
+        font-size: 16px;
+    }
+
+    .checkBox {
+        width: 20px;
+        height: 20px;
+        border-radius: 20px;
+        margin-right: 15px;
+        border: 2px solid #E8E8E8;
+        text-align: center;
+        cursor: pointer;
+
+        &.finished {
+            svg path{stroke: #B3B3B3;}
+            border: 0;
+            background-color: #F2F2F2;
+        }
+
+        &:active {
+            svg path{stroke: #FFF;}
+            border: 0;
+            background-color: #4DD599;
+        }
+    }
+}

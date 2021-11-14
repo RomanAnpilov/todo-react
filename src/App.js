@@ -5,12 +5,16 @@ import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 
 import List from "./components/List";
 import AddList from "./components/AddList";
+import Tasks from "./components/Tasks";
+
+import AppContext from "./context"
 
 function App() {
   let navigate = useNavigate();
   let location = useLocation();
 
   const [lists, setLists] = React.useState([]);
+  const [tasks, setTasks] = React.useState([]);
   const [colors, setColors] = React.useState(null);
   const [activeItem, setActiveItem] = React.useState(null);
 
@@ -18,13 +22,15 @@ function App() {
   React.useEffect(() => {
     (async () => {
       try {
-        const [colorsResponse, listsResponse] =
+        const [colorsResponse, listsResponse, tasksResponse] =
           await Promise.all([
             axios.get("http://127.0.0.1:5000/colors"),
             axios.get("http://127.0.0.1:5000/lists"),
+            axios.get("http://127.0.0.1:5000/tasks")
           ]);
-        setColors(colorsResponse.data);
         setLists(listsResponse.data);
+        setColors(colorsResponse.data);
+        setTasks(tasksResponse.data);
       } catch (e) {
         console.error(e);
       }
@@ -35,11 +41,19 @@ function App() {
     const listId = location.pathname.split("lists/")[1];
     if (lists) {
       const list = lists.find(item => item.id === Number(listId))
+      // const list = {
+      //   "id": 1,
+      //   "name": "Продажи",
+      //   "color": {"name" : "lime", "hex" : "#B6E6BD"}
+      // }
       setActiveItem(list)
     }
   }, [lists, location]);
 
   return (
+    <AppContext.Provider value={{
+      lists, tasks, colors
+    }}>
     <div className="todo">
       <div className="todo__sidebar">
         <List
@@ -60,8 +74,16 @@ function App() {
         />
         <AddList colors={colors} />
       </div>
-      <div className="todo__content"></div>
+      
+        <div className="todo__tasks">
+          <Routes>
+            <Route exact path="/" element={<>{lists.map(list => (<Tasks list={list} tasks={tasks}/>))}</>}/>
+            {console.log(activeItem)}
+            <Route exact path="/lists/:id" element={<Tasks list={activeItem} tasks={tasks} />} />
+          </Routes>
+        </div>
     </div>
+    </AppContext.Provider>
   );
 }
 
