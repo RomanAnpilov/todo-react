@@ -2,6 +2,8 @@ import React from "react";
 import axios from "axios";
 
 import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
+import {useSelector} from "react-redux";
+import {fetchColors} from "./Redux/actions/colors";
 
 import List from "./components/List";
 import AddList from "./components/AddList";
@@ -13,29 +15,39 @@ function App() {
   let navigate = useNavigate();
   let location = useLocation();
 
+  React.useEffect(() => {
+    fetchColors();
+  }, [])
+
+  const items = useSelector((state) => (state.items));
+  console.log(items)
+
   const [lists, setLists] = React.useState([]);
   const [tasks, setTasks] = React.useState([]);
   const [colors, setColors] = React.useState(null);
   const [activeItem, setActiveItem] = React.useState(null);
 
   // Get colors from server
-  React.useEffect(() => {
-    (async () => {
-      try {
-        const [colorsResponse, listsResponse, tasksResponse] =
-          await Promise.all([
-            axios.get("http://127.0.0.1:5000/colors"),
-            axios.get("http://127.0.0.1:5000/lists"),
-            axios.get("http://127.0.0.1:5000/tasks")
-          ]);
-        setLists(listsResponse.data);
-        setColors(colorsResponse.data);
-        setTasks(tasksResponse.data);
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  }, []);
+  // React.useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const [colorsResponse, listsResponse, tasksResponse] =
+  //         await Promise.all([
+  //           axios.get("https://61995d4b9022ea0017a7ae3f.mockapi.io/colors"),
+  //           axios.get("https://61995d4b9022ea0017a7ae3f.mockapi.io/lists"),
+  //           axios.get("https://61995d4b9022ea0017a7ae3f.mockapi.io/tasks")
+  //         ]);
+  //       setColors(colorsResponse.data);
+  //       setLists(listsResponse.data);
+  //       setTasks(tasksResponse.data);
+        
+  //     } catch (e) {
+  //       console.error(e);
+  //     }
+  //   })();
+  // }, []);
+
+ 
 
   React.useEffect(() => {
     const listId = location.pathname.split("lists/")[1];
@@ -55,7 +67,7 @@ function App() {
       lists, tasks, colors
     }}>
     <div className="todo">
-      <div className="todo__sidebar">
+      {/* <div className="todo__sidebar">
         <List
           color={colors}
           items={[
@@ -81,7 +93,7 @@ function App() {
             {console.log(activeItem)}
             <Route exact path="/lists/:id" element={<Tasks list={activeItem} tasks={tasks} />} />
           </Routes>
-        </div>
+        </div> */}
     </div>
     </AppContext.Provider>
   );
